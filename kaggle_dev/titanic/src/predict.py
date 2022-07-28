@@ -27,7 +27,6 @@ def predict_crossval(X: NDArray[Shape['Sample, Freatures'], Float]) -> NDArray[S
 
 
 if __name__ == '__main__':
-    # df_test = pd.read_csv(params.TEST_DATA)
     df_test = pd.read_pickle(params.TEST_DATA)
     df_test = preprocess_dataset(df_test)
     # pred_proba = predict(X=df_test.values)

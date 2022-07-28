@@ -40,21 +40,25 @@ class LGBMTrainer:
         self._val_indices_list = []
 
     def get_y_pred(self) -> pd.Series:
+        """検証データの予測値を取得する"""
         if not self._is_trained:
             raise Exception('Untrained!')
         return pd.Series(self.y_pred)
 
     def get_matrics(self) -> pd.DataFrame:
+        """検証データの評価指標値を取得する"""
         if not self._is_trained:
             raise Exception('Untrained!')
         return pd.DataFrame(self.matrics_results)
 
     def get_model(self) -> lgb.LGBMModel:
+        """学習済みモデルを取得する"""
         if not self._is_trained:
             raise Exception('Untrained!')
         return self.estimator
 
     def train(self, n_splits: int = params.NUM_SPLITS) -> None:
+        """モデルの学習を行う"""
         if self.cross_val:    
             cv_indices = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42).split(self.X, self.y)
             for nfold, (train_idx, val_idx) in enumerate(cv_indices):
@@ -65,7 +69,7 @@ class LGBMTrainer:
                 plt.close()
                 save_pkl(self.estimator, params.OUTPUT_DIR/f'trained_model_{nfold}fold.pkl')
             self._is_trained = True
-            self._save_shap_result()
+            self._save_shap_result()  # Shap値を計算
         else:
             self.estimator.fit(X=self.X, y=self.y)
             y_train_pred = self.estimator.predict(self.X)
@@ -75,6 +79,7 @@ class LGBMTrainer:
             self._is_trained = True
 
     def _train_crossval_step(self, train_idx: List[int], val_idx: List[int]) -> None:
+        """Cross Validation の1stepの計算を行う"""
         X_train, y_train = self.X[train_idx], self.y[train_idx]
         X_val, y_val = self.X[val_idx], self.y[val_idx]
         self.estimator.fit(
@@ -96,6 +101,7 @@ class LGBMTrainer:
         self._val_indices_list.append(val_idx)
 
     def _save_shap_result(self) -> None:
+        """Shap値を計算し結果を保存する"""
         shap_values = np.concatenate(self._shap_values_list)
         val_indices = np.concatenate(self._val_indices_list)
         X_val = pd.DataFrame(self.X[val_indices], columns=self.features)

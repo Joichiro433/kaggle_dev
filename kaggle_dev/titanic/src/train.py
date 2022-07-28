@@ -63,7 +63,6 @@ def train_crossval(df_train):
     
 
 if __name__ == '__main__':
-    # df_train: pd.DataFrame = pd.read_csv(params.TRAINING_DATA)
     df_train: pd.DataFrame = pd.read_pickle(params.TRAINING_DATA)
     df_train = preprocess_dataset(df=df_train)
 

@@ -1,3 +1,7 @@
+"""
+ハイパーパラメータのチューニングを行う
+"""
+
 from typing import Dict
 from nptyping import NDArray
 
@@ -43,7 +47,6 @@ class Objective:
 
 
 if __name__ == '__main__':
-    # df: pd.DataFrame = pd.read_csv(params.TRAINING_DATA)
     df: pd.DataFrame = pd.read_pickle(params.TRAINING_DATA)
     df = preprocess_dataset(df=df)
     X: NDArray[Shape['Sample, Features'], Float] = df.drop(params.TARGET, axis=1).values
